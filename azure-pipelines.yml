@@ -66,77 +66,79 @@ jobs:
             "storageName": "[concat('storage', uniqueString(resourceGroup().id))]"
           },
           "resources": [
-           "name": "[parameters('mes machinesName')]",
-      "type": "Microsoft.Compute/availabilitySets",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2015-06-15",
-      "dependsOn": [ ],
-      "tags": {
-        "displayName": "mes machines"
-      },
-      "properties": {
-        "platformUpdateDomainCount": 1,
-        "platformFaultDomainCount": 1
-      }
-    },
-    {
-      "name": "projetvnet",
-      "type": "Microsoft.Network/virtualNetworks",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2016-03-30",
-      "dependsOn": [ ],
-      "tags": {
-        "displayName": "projetvnet"
-      },
-      "properties": {
-        "addressSpace": {
-          "addressPrefixes": [
-            "[variables('projetvnetPrefix')]"
-          ]
-        },
-        "subnets": [
-          {
-            "name": "[variables('projetvnetSubnet1Name')]",
-            "properties": {
-              "addressPrefix": "[variables('projetvnetSubnet1Prefix')]"
+            {
+              "name": "[parameters('mes machinesName')]",
+              "type": "Microsoft.Compute/availabilitySets",
+              "location": "[resourceGroup().location]",
+              "apiVersion": "2015-06-15",
+              "dependsOn": [ ],
+              "tags": {
+                "displayName": "mes machines"
+              },
+              "properties": {
+                "platformUpdateDomainCount": 1,
+                "platformFaultDomainCount": 1
+              }
+            },
+            {
+              "name": "projetvnet",
+              "type": "Microsoft.Network/virtualNetworks",
+              "location": "[resourceGroup().location]",
+              "apiVersion": "2016-03-30",
+              "dependsOn": [ ],
+              "tags": {
+                "displayName": "projetvnet"
+              },
+              "properties": {
+                "addressSpace": {
+                  "addressPrefixes": [
+                    "[variables('projetvnetPrefix')]"
+                  ]
+                },
+                "subnets": [
+                  {
+                    "name": "[variables('projetvnetSubnet1Name')]",
+                    "properties": {
+                      "addressPrefix": "[variables('projetvnetSubnet1Prefix')]"
+                    }
+                  },
+                  {
+                    "name": "[variables('projetvnetSubnet2Name')]",
+                    "properties": {
+                      "addressPrefix": "[variables('projetvnetSubnet2Prefix')]"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "[variables('storageName')]",
+              "type": "Microsoft.Storage/storageAccounts",
+              "location": "East US",
+              "apiVersion": "2016-01-01",
+              "sku": {
+                "name": "[parameters('storageType')]"
+              },
+              "dependsOn": [ ],
+              "tags": {
+                "displayName": "storage"
+              },
+              "kind": "Storage"
+            },
+            {
+              "name": "[parameters('basedName')]",
+              "type": "SuccessBricks.ClearDB/databases",
+              "location": "[resourceGroup().location]",
+              "apiVersion": "2014-04-01",
+              "plan": {
+                "name": "[parameters('basedSku')]"
+              },
+              "dependsOn": [ ],
+              "tags": {
+                "provision_source": "RMS",
+                "displayName": "based"
+              }
             }
-          },
-          {
-            "name": "[variables('projetvnetSubnet2Name')]",
-            "properties": {
-              "addressPrefix": "[variables('projetvnetSubnet2Prefix')]"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "[variables('storageName')]",
-      "type": "Microsoft.Storage/storageAccounts",
-      "location": "East US",
-      "apiVersion": "2016-01-01",
-      "sku": {
-        "name": "[parameters('storageType')]"
-      },
-      "dependsOn": [ ],
-      "tags": {
-        "displayName": "storage"
-      },
-      "kind": "Storage"
-    },
-    {
-      "name": "[parameters('basedName')]",
-      "type": "SuccessBricks.ClearDB/databases",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2014-04-01",
-      "plan": {
-        "name": "[parameters('basedSku')]"
-      },
-      "dependsOn": [ ],
-      "tags": {
-        "provision_source": "RMS",
-        "displayName": "based"
-      }
           ],
           "outputs": {}
         }
