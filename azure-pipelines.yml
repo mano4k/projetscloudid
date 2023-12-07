@@ -16,5 +16,37 @@ steps:
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
     goals: 'package'
 
+
+
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'windows-latest'
+
+jobs:
+- job: 'DeployVMJob'
+  displayName: 'Deploy VM'
+  steps:
+  - template: azure-pipelines-templates/deploy-vm.yml
+    parameters:
+      vmName: 'MyVM'
+      vmSize: 'Standard_DS2_v2'
+      
+    task: AzureResourceManagerTemplateDeployment@3
+  inputs:
+    deploymentScope: 'testing'
+    action: 'Create Or Update Resource Group'
+    templateLocation: 'Linked artifact'
+    csmFile: 'https://github.com/mano4k/projetscloudid'
+    csmParametersFile: 'https://github.com/mano4k/projetscloudid'
+    overrideParameters: '-overrideParam1 value1 -overrideParam2 value2'
+    deploymentMode: 'Incremental'
+    deploymentName: 'DeployVM'
+
+
+
     
     
