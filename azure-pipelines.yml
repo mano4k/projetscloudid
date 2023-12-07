@@ -19,7 +19,7 @@ jobs:
     inputs:
       deploymentScope: 'Resource Group'
       action: 'Create Or Update Resource Group'
-      resourceGroupName: 'YourResourceGroupName'
+      resourceGroupName: 'testing'
       location: 'East US'  # Update with your desired location
       templateLocation: 'Inline'
       template: |
@@ -72,8 +72,8 @@ jobs:
         }
       # Parameters for the ARM template
       overrideParameters: >
-        -mes machinesName 'YourVMName'
+        -mes machinesName 'vm scal'
         -storageType 'Standard_LRS'
-        -basedName 'YourDBName'
+        -basedName 'baseUqac'
         -basedSku 'Free'
       deploymentMode: 'Incremental'
