@@ -1,11 +1,5 @@
-
-
-
-
 trigger:
-  branches:
-    include:
-      - main
+- main
 
 pool:
   vmImage: 'windows-latest'
@@ -14,23 +8,72 @@ jobs:
 - job: 'DeployVMJob'
   displayName: 'Deploy VM'
   steps:
-  - template: azure-pipelines-templates/deploy-vm.yml
-    parameters:
-      vmName: 'MyVM'
-      vmSize: 'Standard_DS2_v2'
-      setup:
-    task: AzureResourceManagerTemplateDeployment@3
-  inputs:
-    deploymentScope: 'testing'
-    action: 'Create Or Update Resource Group'
-    templateLocation: 'Linked artifact'
-    csmFile: 'https://github.com/mano4k/projetscloudid'
-    csmParametersFile: 'https://github.com/mano4k/projetscloudid'
-    overrideParameters: '-overrideParam1 value1 -overrideParam2 value2'
-    deploymentMode: 'Incremental'
-    deploymentName: 'DeployVM'
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core SDK'
+    inputs:
+      version: '3.x'
+      installationPath: $(Agent.ToolsDirectory)/dotnet
 
-
-
-    
-    
+  - task: AzureResourceManagerTemplateDeployment@3
+    displayName: 'Deploy ARM Template'
+    inputs:
+      deploymentScope: 'Resource Group'
+      action: 'Create Or Update Resource Group'
+      resourceGroupName: 'YourResourceGroupName'
+      location: 'East US'  # Update with your desired location
+      templateLocation: 'Inline'
+      template: |
+        {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "mes machinesName": {
+              "type": "string",
+              "minLength": 1
+            },
+            "storageType": {
+              "type": "string",
+              "defaultValue": "Standard_LRS",
+              "allowedValues": [
+                "Standard_LRS",
+                "Standard_ZRS",
+                "Standard_GRS",
+                "Standard_RAGRS",
+                "Premium_LRS"
+              ]
+            },
+            "basedName": {
+              "type": "string",
+              "minLength": 1
+            },
+            "basedSku": {
+              "type": "string",
+              "allowedValues": [
+                "Free",
+                "Jupiter",
+                "Saturn",
+                "Venus"
+              ],
+              "defaultValue": "Free"
+            }
+          },
+          "variables": {
+            "projetvnetPrefix": "10.0.0.0/16",
+            "projetvnetSubnet1Name": "Subnet-1",
+            "projetvnetSubnet1Prefix": "10.0.0.0/24",
+            "projetvnetSubnet2Name": "Subnet-2",
+            "projetvnetSubnet2Prefix": "10.0.1.0/24",
+            "storageName": "[concat('storage', uniqueString(resourceGroup().id))]"
+          },
+          "resources": [
+            // ... Copiez la section "resources" de votre modèle JSON ici ...
+          ],
+          "outputs": {}
+        }
+      # Parameters for the ARM template
+      overrideParameters: >
+        -mes machinesName 'YourVMName'
+        -storageType 'Standard_LRS'
+        -basedName 'YourDBName'
+        -basedSku 'Free'
+      deploymentMode: 'Incremental'
