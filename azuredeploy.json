@@ -1,8 +1,8 @@
 {
-"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "mes machinesName": {
+    "mesMachinesName": {
       "type": "string",
       "minLength": 1
     },
@@ -17,6 +17,10 @@
         "Premium_LRS"
       ]
     },
+    "ResourceGroupLocation": {
+      "type": "string",
+      "defaultValue": "East US"
+    },
     "basedName": {
       "type": "string",
       "minLength": 1
@@ -30,21 +34,23 @@
         "Venus"
       ],
       "defaultValue": "Free"
-    }},
+    }
+  },
   "variables": {
     "projetvnetPrefix": "10.0.0.0/16",
     "projetvnetSubnet1Name": "Subnet-1",
     "projetvnetSubnet1Prefix": "10.0.0.0/24",
     "projetvnetSubnet2Name": "Subnet-2",
     "projetvnetSubnet2Prefix": "10.0.1.0/24",
-    "storageName": "[concat('storage', uniqueString(resourceGroup().id))]"},
+    "storageName": "[concat('storage', uniqueString(resourceGroup().id))]"
+  },
   "resources": [
     {
-      "name": "[parameters('mes machinesName')]",
+      "name": "[parameters('mesMachinesName')]",
       "type": "Microsoft.Compute/availabilitySets",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('ResourceGroupLocation')]",
       "apiVersion": "2015-06-15",
-      "dependsOn": [ ],
+      "dependsOn": [],
       "tags": {
         "displayName": "mes machines"
       },
@@ -56,9 +62,9 @@
     {
       "name": "projetvnet",
       "type": "Microsoft.Network/virtualNetworks",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('ResourceGroupLocation')]",
       "apiVersion": "2016-03-30",
-      "dependsOn": [ ],
+      "dependsOn": [],
       "tags": {
         "displayName": "projetvnet"
       },
@@ -87,12 +93,12 @@
     {
       "name": "[variables('storageName')]",
       "type": "Microsoft.Storage/storageAccounts",
-      "location": "East US",
+      "location": "[parameters('ResourceGroupLocation')]",
       "apiVersion": "2016-01-01",
       "sku": {
         "name": "[parameters('storageType')]"
       },
-      "dependsOn": [ ],
+      "dependsOn": [],
       "tags": {
         "displayName": "storage"
       },
@@ -100,17 +106,18 @@
     },
     {
       "name": "[parameters('basedName')]",
-      "type": "SuccessBricks.ClearDB/databases",
-      "location": "[resourceGroup().location]",
+      "type": "SuccessBricks.ClearDB/databases",  // Utilisez le type correct pour le stockage basé
+      "location": "[parameters('ResourceGroupLocation')]",
       "apiVersion": "2014-04-01",
       "plan": {
         "name": "[parameters('basedSku')]"
       },
-      "dependsOn": [ ],
+      "dependsOn": [],
       "tags": {
         "provision_source": "RMS",
         "displayName": "based"
       }
-    }],
+    }
+  ],
   "outputs": {}
 }
