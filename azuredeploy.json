@@ -106,7 +106,7 @@
     },
     {
       "name": "[parameters('basedName')]",
-      "type": "SuccessBricks.ClearDB/databases",  // Utilisez le type correct pour le stockage basé
+      "type": "SuccessBricks.ClearDB/databases",  
       "location": "[parameters('ResourceGroupLocation')]",
       "apiVersion": "2014-04-01",
       "plan": {
